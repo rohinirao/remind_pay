@@ -23,8 +23,8 @@ A simple Rails 7.2.2 application to manage payment reminders. Users can create, 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/payment-reminder.git
-   cd payment-reminder
+   git clone https://github.com/rohinirao/remind_pay
+   cd remind_pay
    ```
 
 2. Install dependencies:

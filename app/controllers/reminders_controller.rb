@@ -4,7 +4,7 @@ class RemindersController < ApplicationController
 
   # GET /reminders or /reminders.json
   def index
-    @reminders = Reminder.by_latest
+    @reminders = Reminder.by_oldest
   end
 
   # GET /reminders/1 or /reminders/1.json
@@ -72,6 +72,6 @@ class RemindersController < ApplicationController
     end
 
     def set_due_notifications
-      @due_notifications = Reminder.get_dues.by_latest
+      @due_notifications = Reminder.get_dues.by_oldest
     end
 end

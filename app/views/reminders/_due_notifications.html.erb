@@ -4,7 +4,7 @@
   <ul>
     <% due_notifications.each do |notification| %>
       <li>
-        <strong> <%= notification.title %> </strong> is due on <%= notification.trigger_at.strftime("%Y-%m-%d %H:%M:%S") %> for <%= number_to_currency(notification.price, unit: notification.currency) %> <br>
+        <strong> <%= notification.title %> </strong> is due on <%= notification.trigger_at.strftime("%H:%M:%S") %> for <%= number_to_currency(notification.price, unit: notification.currency) %> <br>
         <hr>
       </li>
     <% end %>

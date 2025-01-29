@@ -8,22 +8,18 @@ class ReminderNotificationJob < ApplicationJob
     ActionCable.server.broadcast(
       "notifications",
       { title: reminder.title,
-      message: "Your reminder for #{reminder.title} is due!",
+      message: "Your reminder for #{reminder.title} is due for #{reminder.price}",
       trigger_at: reminder.trigger_at.strftime("%Y-%m-%d %H:%M") }
     )
 
-    # Handle recurrence
-    if reminder.recurrence.present?
-      case reminder.recurrence
-      when "daily"
-        reminder.update(trigger_at: reminder.trigger_at + 1.day)
-      when "weekly"
-        reminder.update(trigger_at: reminder.trigger_at + 1.week)
-      when "monthly"
-        reminder.update(trigger_at: reminder.trigger_at + 1.month)
-      end
-
-      reminder.schedule_notification
+    case reminder.recurrence
+    when "Daily"
+      reminder.update(trigger_at: reminder.trigger_at + 1.day)
+    when "Weekly"
+      reminder.update(trigger_at: reminder.trigger_at + 1.week)
+    when "Monthly"
+      reminder.update(trigger_at: reminder.trigger_at + 1.month)
     end
+    # place holder for other buissness logic to send mail or something
   end
 end

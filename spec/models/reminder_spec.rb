@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Reminder, type: :model do
+  include ActiveJob::TestHelper
   describe 'validations' do
     subject { FactoryBot.create(:reminder) }
 
@@ -14,6 +15,7 @@ RSpec.describe Reminder, type: :model do
 
     it { should validate_presence_of(:trigger_at) }
     it { should validate_presence_of(:currency) }
+    it { should validate_presence_of(:recurrence) }
     it { should validate_inclusion_of(:recurrence).in_array([ 'Daily', 'Weekly', 'Monthly', '-' ]) }
 
     context 'trigger_at validation' do
@@ -31,13 +33,41 @@ RSpec.describe Reminder, type: :model do
   end
 
   describe 'scopes' do
-    describe '.by_latest' do
+    describe 'by_oldest' do
       it 'returns reminders ordered by trigger_at in ascending order' do
         reminder1 = FactoryBot.create(:reminder, trigger_at: 1.day.from_now)
         reminder2 = FactoryBot.create(:reminder, trigger_at: 2.days.from_now)
         reminder3 = FactoryBot.create(:reminder, trigger_at: 3.days.from_now)
 
-        expect(Reminder.by_latest).to eq([ reminder1, reminder2, reminder3 ])
+        expect(Reminder.by_oldest).to eq([ reminder1, reminder2, reminder3 ])
+      end
+    end
+
+    describe ".get_dues" do
+      let!(:due_reminder) { FactoryBot.create(:reminder, trigger_at: Time.current, recurrence: "-") }
+      let!(:future_reminder) { FactoryBot.create(:reminder, trigger_at: Time.current + 1.day, recurrence: "-") }
+      let!(:daily_reminder) { FactoryBot.create(:reminder, trigger_at: Time.current, recurrence: "Daily") }
+      let!(:weekly_reminder) { FactoryBot.create(:reminder, trigger_at: 1.week.from_now.beginning_of_day + 1.hour, recurrence: "Weekly") }
+      let!(:monthly_reminder) { FactoryBot.create(:reminder, trigger_at: 1.month.from_now.change(hour: Time.current.hour), recurrence: "Monthly") }
+
+      it "includes due reminders for today" do
+        expect(Reminder.get_dues).to include(due_reminder)
+      end
+
+      it "does not include future reminders" do
+        expect(Reminder.get_dues).not_to include(future_reminder)
+      end
+
+      it "includes daily reminders if the time has passed" do
+        expect(Reminder.get_dues).to include(daily_reminder)
+      end
+
+      it "includes weekly reminders if set for today and time has passed" do
+        expect(Reminder.get_dues).to include(weekly_reminder)
+      end
+
+      it "includes monthly reminders if set for today and time has passed" do
+        expect(Reminder.get_dues).to include(monthly_reminder)
       end
     end
   end
@@ -55,11 +85,10 @@ RSpec.describe Reminder, type: :model do
   end
 
   describe 'callbacks' do
-    xit 'schedules a notification job after commit' do
-      reminder = FactoryBot.create(:reminder)
+    it 'schedules a notification job after commit' do
+      reminder = Reminder.create(title: "test", trigger_at: Time.current, price: 56, currency: "Euro", recurrence: '-')
+      expect(ReminderNotificationJob).to have_been_enqueued.with(reminder.id)
       reminder.save
-      expect(ReminderNotificationJob).to receive(:set).with(wait_until: reminder.trigger_at).and_call_original
-      expect(ReminderNotificationJob).to receive(:perform_later).with(reminder.id)
     end
   end
 end

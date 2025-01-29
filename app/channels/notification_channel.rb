@@ -1,7 +1,5 @@
 class NotificationChannel < ApplicationCable::Channel
   def subscribed
-    # console.log("Connected to Actioncable")
-    puts "connected"
     stream_from "notifications"
   end
 
