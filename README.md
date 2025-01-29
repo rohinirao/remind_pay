@@ -37,6 +37,10 @@ A simple Rails 7.2.2 application to manage payment reminders. Users can create, 
    rails db:create
    rails db:migrate
    ```
+4. Compile the Assets
+   ```bash
+   rails assets:precompile 
+   ```
 
 ## Running the Server
 
