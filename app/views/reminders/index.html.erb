@@ -1,0 +1,41 @@
+<%= render "due_notifications", due_notifications: @due_notifications %>
+
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Reminders" %>
+
+<h1>Reminders</h1>
+
+<div id="reminders">
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f8f9fa;">Title</th>
+        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f8f9fa; max-width: 300px;">Description</th>
+        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f8f9fa;">Trigger at</th>
+        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f8f9fa;">Price</th>
+        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f8f9fa;">Currency</th>
+        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f8f9fa;">Recurrence</th>
+        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f8f9fa;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @reminders.each do |reminder| %>
+        <tr id="<%= dom_id reminder %>">
+          <td style="border: 1px solid #ddd; padding: 8px;"><%= reminder.title %></td>
+          <td style="border: 1px solid #ddd; padding: 8px; max-width: 300px; word-wrap: break-word;"><%= reminder.description %></td>
+          <td style="border: 1px solid #ddd; padding: 8px;"><%= reminder.trigger_at %></td>
+          <td style="border: 1px solid #ddd; padding: 8px;"><%= reminder.price %></td>
+          <td style="border: 1px solid #ddd; padding: 8px;"><%= reminder.currency %></td>
+          <td style="border: 1px solid #ddd; padding: 8px;"><%= reminder.recurrence %></td>
+          <td style="border: 1px solid #ddd; padding: 8px;">
+            <%= link_to "Show", reminder, style: "text-decoration: none; background-color: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 14px;" %>
+            <%= button_to "Destroy", reminder, method: :delete, style: "text-decoration: none; background-color: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 14px;" %>
+            </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= link_to "New reminder", new_reminder_path %>

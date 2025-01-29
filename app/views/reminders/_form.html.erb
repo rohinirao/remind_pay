@@ -1,0 +1,67 @@
+<%= form_with(model: reminder) do |form| %>
+  <% if reminder.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(reminder.errors.count, "error") %> prohibited this reminder from being saved:</h2>
+
+      <ul>
+        <% reminder.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title, 
+      required: true,
+      maxlength: 250,
+      pattern: "[a-zA-Z0-9\s]+",
+      title: "Only letters, numbers and spaces allowed",
+      placeholder: "Enter title",
+      style: "width:250px" %>
+  </div>
+
+  <div>
+    <%= form.label :description, style: "display: block" %>
+    <%= form.text_area :description , style: "width:250px"%>
+  </div>
+
+  <div>
+    <%= form.label :trigger_at, style: "display: block" %>
+    <%= form.datetime_field :trigger_at, 
+      required: true,
+      min: Time.current.strftime('%Y-%m-%dT%H:%M'),
+      max: 1.year.from_now.strftime('%Y-%m-%dT%H:%M'),
+      value: @reminder.trigger_at&.strftime('%Y-%m-%dT%H:%M') || Time.current.strftime('%Y-%m-%dT%H:%M'),
+      style: "width: 250px;" %>
+  </div>
+
+  <div>
+    <%= form.label :price, style: "display: block" %>
+    <%= form.number_field :price, 
+      required: true,
+      min: 0.01,
+      max: 999999.99,
+      step: "0.01",
+      placeholder: "0.00",
+      style: "width: 250px;" %>
+  </div>
+
+  <div>
+    <%= form.label :currency, style: "display: block" %>  
+    <% currencies = [["USD", "USD"], ["EUR", "EUR"], ["GBP", "GBP"], ["INR", "INR"]] %>
+    <%= form.select :currency, options_for_select(currencies), {}, style: "width:250px" %>
+  </div>
+
+  <div>
+    <%= form.label :recurrence, style: "display: block" %>
+    <% recurrences = [["-", "-"], ["Daily", "Daily"], ["Weekly", "Weekly"], ["Monthly", "Monthly"]] %>
+    <%= form.select :recurrence, options_for_select(recurrences), {}, style: "width:250px" %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
