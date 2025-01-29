@@ -67,5 +67,10 @@ Run tests using:
 rspec
 ```
 
+## ToDo
+- Convert Recurrence to enum and store integer instead of string in the DB
+- Use database based jobs so that jobs can be cancelled/re-scheduled
+- Use Action cable notifications to display all the notification (some more research) 
+
 ## License
 This project is licensed under the MIT License.
